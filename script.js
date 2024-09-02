@@ -1,8 +1,12 @@
 const itemForm = document.getElementById('item-form');
 const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
+const clearBtn = document.getElementById('clear');
 
 
+
+
+// Functions - add item 
 function addItem(e) {
     e.preventDefault();
     const newItem = itemInput.value;
@@ -26,7 +30,6 @@ function addItem(e) {
 }
 
 
-// Functions
 function createButton(classes) {
     const button = document.createElement('button');
     button.className = classes;
@@ -41,6 +44,30 @@ function createIcon(classes) {
     return icon;
 }
 
+// Function - delete items
+function removeItem(e) {
+    if (e.target.parentElement.classList.contains('remove-item')) {
+        e.target.parentElement.parentElement.remove();
+    }
+}
+
+// Function - clear all (method 1)
+function clearAll(e) {
+    if (e.target.classList.contains('btn-clear')) {
+        itemList.remove(); 
+    }
+}
+
+// Function - clear all (method 2)
+// function clearAll() {
+//     while (itemList.firstChild) {
+//         itemList.removeChild(itemList.firstChild);  
+//     }
+// }
+
+
 
 // Event Listeners
-itemForm.addEventListener('submit', addItem);
+itemForm.addEventListener('submit', addItem); // To add items
+itemList.addEventListener('click', removeItem); // To remove items
+clearBtn.addEventListener('click', clearAll); // To clear all 
