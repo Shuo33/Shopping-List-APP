@@ -2,11 +2,11 @@ const itemForm = document.getElementById('item-form');
 const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
 const clearBtn = document.getElementById('clear');
+const itemFilter = document.getElementById('filter');
 
 
 
-
-// Functions - add item 
+// Functions - add items 
 function addItem(e) {
     e.preventDefault();
     const newItem = itemInput.value;
@@ -24,7 +24,10 @@ function addItem(e) {
     const button = createButton('remove-item btn-link text-red');
     li.appendChild(button);
 
+    // Add li to the DOM
     itemList.appendChild(li);
+
+    checkItems(); 
 
     itemInput.value = '';
 }
@@ -44,26 +47,51 @@ function createIcon(classes) {
     return icon;
 }
 
+
+
 // Function - delete items
 function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
-        e.target.parentElement.parentElement.remove();
+        if (confirm('Are you sure ?')) {
+            e.target.parentElement.parentElement.remove();
+            checkItems();
+        }
     }
 }
 
-// Function - clear all (method 1)
-function clearAll(e) {
-    if (e.target.classList.contains('btn-clear')) {
-        itemList.remove(); 
-    }
-}
-
-// Function - clear all (method 2)
-// function clearAll() {
-//     while (itemList.firstChild) {
-//         itemList.removeChild(itemList.firstChild);  
+// Function - clear all items (method 1)
+// function clearAll(e) {
+//     if (e.target.classList.contains('btn-clear')) {
+//         itemList.remove();
 //     }
 // }
+
+// Function - clear all items (method 2)
+function clearAll() {
+    while (itemList.firstChild) {
+        itemList.removeChild(itemList.firstChild);  
+    }
+    checkItems();
+}
+
+
+
+// Function - check if there's no items then we delete the filter and the clear button
+function checkItems() {
+    const items = itemList.querySelectorAll('li');
+    if (items.length === 0) {
+        clearBtn.style.display = 'none';
+        itemFilter.style.display = 'none';
+    } else {
+        clearBtn.style.display = 'block';
+        itemFilter.style.display = 'block';
+    }
+    console.log(items);
+}
+
+
+
+
 
 
 
@@ -71,3 +99,6 @@ function clearAll(e) {
 itemForm.addEventListener('submit', addItem); // To add items
 itemList.addEventListener('click', removeItem); // To remove items
 clearBtn.addEventListener('click', clearAll); // To clear all 
+
+
+checkItems();
