@@ -7,29 +7,61 @@ const itemFilter = document.getElementById('filter');
 
 
 // Functions - add items 
-function addItem(e) {
+function onAddItemSubmit(e) {
     e.preventDefault();
     const newItem = itemInput.value;
 
-    // Validate input
+    // validate input
     if (newItem === '') {
         alert('Please add an item');
         return; 
     } 
 
+    // new elements will be add to the DOM 
+    addItemToDOM(newItem);
+
+    // add those new elements to local storage 
+    addItemToStorage(newItem);
+
+
+    checkItems(); 
+
+    itemInput.value = '';
+}
+
+
+
+function addItemToStorage(item) {
+    //create a varable named 'itemsFromStorage' which represente the array of items in local storage
+    let itemsFromStorage;
+
+    // check if there's already items in local storage
+    if (localStorage.getItem('items') === null) {
+        itemsFromStorage = [];
+        //set the key to 'items' and null means nothing in the varable of 'itemsFromStorage', then we set this varable to an empty array
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
+        //in case there's already some items, set thoses items into an array and put it into the varable 'itemsFromStorage' 
+    }
+
+    // Add new item to the array of 'itemsFromStorage' 
+    itemsFromStorage.push(item); 
+
+    // Convert the array of 'itemsFromStorag' to String so to set it to local storage, with 'item' as key and JSON.stringify(itemsFromStorage) as it's value
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+}
+
+
+function addItemToDOM(item) {
     // Create list item
     const li = document.createElement('li');
-    li.appendChild(document.createTextNode(newItem)); 
+    li.appendChild(document.createTextNode(item)); 
 
     const button = createButton('remove-item btn-link text-red');
     li.appendChild(button);
 
     // Add li to the DOM
     itemList.appendChild(li);
-
-    checkItems(); 
-
-    itemInput.value = '';
 }
 
 
@@ -77,14 +109,17 @@ function clearAll() {
 
 // Function - filter items 
 function filterItems(e) {
+    // récupérer the text tappé (new)
     const text = e.target.value.toLowerCase();
     // console.log(text);
     
+    // les text déjà tapé seront généré une list, et on va récupérer les text de cette list
     const items = itemList.querySelectorAll('li');
     items.forEach(function (item) {
         const itemName = item.firstChild.textContent.toLowerCase(); 
         // console.log(itemName);
 
+        // comparer les text tappé (new) avec les text (annciennes) dans la list
         if (itemName.indexOf(text) != -1) {
             item.style.display = 'flex';
         } else {
@@ -92,13 +127,6 @@ function filterItems(e) {
         }
     });
 }
-
-
-
-
-
-
-
 
 
 
@@ -123,10 +151,11 @@ function checkItems() {
 
 
 // Event Listeners
-itemForm.addEventListener('submit', addItem); // To add items
-itemList.addEventListener('click', removeItem); // To remove items
-clearBtn.addEventListener('click', clearAll); // To clear all 
-itemFilter.addEventListener('input', filterItems); // To filter the items
+itemForm.addEventListener('submit', onAddItemSubmit); // add new items to DOM and local storage 
+itemList.addEventListener('click', removeItem); // to remove items
+clearBtn.addEventListener('click', clearAll); // to clear all 
+itemFilter.addEventListener('input', filterItems); // to filter the items
 
 
 checkItems();
+
