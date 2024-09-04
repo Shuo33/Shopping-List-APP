@@ -75,6 +75,33 @@ function clearAll() {
 }
 
 
+// Function - filter items 
+function filterItems(e) {
+    const text = e.target.value.toLowerCase();
+    // console.log(text);
+    
+    const items = itemList.querySelectorAll('li');
+    items.forEach(function (item) {
+        const itemName = item.firstChild.textContent.toLowerCase(); 
+        // console.log(itemName);
+
+        if (itemName.indexOf(text) != -1) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
 
 // Function - check if there's no items then we delete the filter and the clear button
 function checkItems() {
@@ -86,7 +113,7 @@ function checkItems() {
         clearBtn.style.display = 'block';
         itemFilter.style.display = 'block';
     }
-    console.log(items);
+    // console.log(items);
 }
 
 
@@ -99,6 +126,7 @@ function checkItems() {
 itemForm.addEventListener('submit', addItem); // To add items
 itemList.addEventListener('click', removeItem); // To remove items
 clearBtn.addEventListener('click', clearAll); // To clear all 
+itemFilter.addEventListener('input', filterItems); // To filter the items
 
 
 checkItems();
