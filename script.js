@@ -3,6 +3,8 @@ const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
 const clearBtn = document.getElementById('clear');
 const itemFilter = document.getElementById('filter');
+const formBtn = itemForm.querySelector('button');
+let isEditMode = false; 
 
 
 
@@ -28,6 +30,25 @@ function onAddItemSubmit(e) {
         alert('Please add an item');
         return; 
     } 
+
+    // check for edit mode
+    if (isEditMode) {
+        const itemToEdit = itemList.querySelector('.edit-mode'); // the items chosen (will get edit have the 'edit-mode' class, so here we put the chosen items into 'itemToEdit'
+
+        removeItemFromStorage(itemToEdit.textContent); //the variable 'itemToEdit' will give the li item, but we need the text of the li item since the function 'removeItemFromStorage' takes only the text of the items, so now we can remove the chosen items from the storage 
+
+        itemToEdit.classList.remove('edit-mode'); //since the chosen items has been removed from the storage, we need to remove it's class so the items will be back to normal
+
+        itemToEdit.remove(); // remove the chosen item from DOM 
+
+        isEditMode = false; 
+        
+    }
+
+
+
+
+
 
     // new elements will be add to the DOM 
     addItemToDOM(newItem);
@@ -99,19 +120,39 @@ function itemsStoredInStorage() {
 }
 
 
-
+// A handler of click, so differents functions could get fired 
 function onClickItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
         removeItem(e.target.parentElement.parentElement);
+    } else {
+        setItemToEdit(e.target);
     }
 }
+
+
+
+// set item to edit 
+function setItemToEdit(item) {
+    isEditMode = true; 
+
+    itemList.querySelectorAll('li').forEach(function (i) {
+        i.classList.remove('edit-mode');
+    });
+
+    item.classList.add('edit-mode');
+    formBtn.innerHTML = '<i class="fa-solid fa-pen"></i>  Update Item'
+    formBtn.style.backgroundColor = '#228B22';
+    itemInput.value = item.textContent; 
+
+}
+
 
 
 // Functions - remove items
 function removeItem(item) {
     if (confirm('Are you sure ?')) {
         item.remove();  //remove item from DOM
-        removeItemFromStorage(item.textContent);  //remove item from the storage
+        removeItemFromStorage(item.textContent);  //remove item from the storage, since the function 'removeItemFromStorage' takes only the text of the items
 
         checkItems();
     }
@@ -121,7 +162,7 @@ function removeItem(item) {
 function removeItemFromStorage(item) {
     let itemsFromStorage = itemsStoredInStorage();
 
-    itemsFromStorage = itemsFromStorage.filter((i) => i !== item); //filter out item to be removed
+    itemsFromStorage = itemsFromStorage.filter((i) => i !== item); //filter out item to be removed, so the clicked ones will get removed from the variable
     
     localStorage.setItem('items', JSON.stringify(itemsFromStorage)); // re-set to localstorage
 }
@@ -171,8 +212,13 @@ function filterItems(e) {
 
 
 
-// Function - check if there's no items then we delete the filter and the clear button
+// Function - check if there's no items then we delete the filter and the clear button, the submit button will back to normal instead of 'update item' mode, the input will initialise to nothing 
+
 function checkItems() {
+
+    itemInput.value = ''; // initialise the input 
+
+
     const items = itemList.querySelectorAll('li');
     if (items.length === 0) {
         clearBtn.style.display = 'none';
@@ -182,6 +228,12 @@ function checkItems() {
         itemFilter.style.display = 'block';
     }
     // console.log(items);
+
+    //submit button back to normal 
+    formBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Item';
+    formBtn.style.backgroundColor = '#333'; 
+
+    isEditMode = false; 
 }
 
 
