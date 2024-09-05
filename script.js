@@ -100,15 +100,34 @@ function itemsStoredInStorage() {
 
 
 
-// Function - delete items
-function removeItem(e) {
+function onClickItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
-        if (confirm('Are you sure ?')) {
-            e.target.parentElement.parentElement.remove();
-            checkItems();
-        }
+        removeItem(e.target.parentElement.parentElement);
     }
 }
+
+
+// Functions - remove items
+function removeItem(item) {
+    if (confirm('Are you sure ?')) {
+        item.remove();  //remove item from DOM
+        removeItemFromStorage(item.textContent);  //remove item from the storage
+
+        checkItems();
+    }
+}
+
+
+function removeItemFromStorage(item) {
+    let itemsFromStorage = itemsStoredInStorage();
+
+    itemsFromStorage = itemsFromStorage.filter((i) => i !== item); //filter out item to be removed
+    
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage)); // re-set to localstorage
+}
+
+
+
 
 // Function - clear all items (method 1)
 // function clearAll(e) {
@@ -123,6 +142,8 @@ function clearAll() {
         itemList.removeChild(itemList.firstChild);  
     }
     checkItems();
+
+    localStorage.removeItem('items'); //clear from localStorage
 }
 
 
@@ -167,7 +188,7 @@ function checkItems() {
 // Initialize Application
 function init() {
     itemForm.addEventListener('submit', onAddItemSubmit); // add new items to DOM and local storage 
-    itemList.addEventListener('click', removeItem); // to remove items
+    itemList.addEventListener('click', onClickItem); 
     clearBtn.addEventListener('click', clearAll); // to clear all 
     itemFilter.addEventListener('input', filterItems); // to filter the items
     document.addEventListener('DOMContentLoaded', displayItems);
