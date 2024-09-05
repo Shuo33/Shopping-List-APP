@@ -20,6 +20,9 @@ function displayItems() {
     checkItems();
 }
 
+
+
+
 // Functions - add items to DOM & storage 
 function onAddItemSubmit(e) {
     e.preventDefault();
@@ -41,14 +44,13 @@ function onAddItemSubmit(e) {
 
         itemToEdit.remove(); // remove the chosen item from DOM 
 
-        isEditMode = false; 
-        
+        isEditMode = false;   
+    } else {
+        if (checkIfItemExists(newItem)) {
+            alert('That item already exists !')
+            return;
+        }
     }
-
-
-
-
-
 
     // new elements will be add to the DOM 
     addItemToDOM(newItem);
@@ -127,6 +129,12 @@ function onClickItem(e) {
     } else {
         setItemToEdit(e.target);
     }
+}
+
+// check if the new added item has already in the storage 
+function checkIfItemExists(item) {
+    const itemsFromStorage = itemsStoredInStorage(); // get the items from storage 
+    return itemsFromStorage.includes(item); // return true if the item has been found in the storage, or return false if the item has not been founc in the storage 
 }
 
 
@@ -208,7 +216,6 @@ function filterItems(e) {
         }
     });
 }
-
 
 
 
